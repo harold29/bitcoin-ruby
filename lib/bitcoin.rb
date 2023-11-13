@@ -78,7 +78,7 @@ module Bitcoin
 
     # check if given +pubkey+ is valid.
     def valid_pubkey?(pubkey)
-      ::OpenSSL::PKey::EC::Point.from_hex(bitcoin_elliptic_curve.group, pubkey)
+      ::OpenSSL::PKey::EC::Point.from_hex(OpenSSL::PKey::EC.new('secp256k1').group, pubkey)
       true
     rescue OpenSSL::PKey::EC::Point::Error
       false
@@ -285,12 +285,8 @@ module Bitcoin
       end
     end
 
-    def bitcoin_elliptic_curve
-      ::OpenSSL::PKey::EC.new("secp256k1")
-    end
-
     def generate_key
-      key = bitcoin_elliptic_curve.generate_key
+      key = OpenSSL::PKey::EC.new('secp256k1').generate_key
       inspect_key( key )
     end
 
@@ -394,7 +390,7 @@ module Bitcoin
     end
 
     def verify_signature(hash, signature, public_key)
-      key  = bitcoin_elliptic_curve
+      key  = OpenSSL::PKey::EC.new('secp256k1')
       key.public_key = ::OpenSSL::PKey::EC::Point.from_hex(key.group, public_key)
       signature = Bitcoin::OpenSSL_EC.repack_der_signature(signature)
       if signature
@@ -407,7 +403,7 @@ module Bitcoin
     end
 
     def open_key(private_key, public_key=nil)
-      key  = bitcoin_elliptic_curve
+      key  = OpenSSL::PKey::EC.new('secp256k1')
       key.private_key = ::OpenSSL::BN.from_hex(private_key)
       public_key = regenerate_public_key(private_key) unless public_key
       key.public_key  = ::OpenSSL::PKey::EC::Point.from_hex(key.group, public_key)
