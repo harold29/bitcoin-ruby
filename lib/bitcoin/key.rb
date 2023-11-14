@@ -40,7 +40,7 @@ module Bitcoin
     #  Bitcoin::Key.new(nil, pubkey)
     def initialize(privkey = nil, pubkey = nil, opts={compressed: true})
       compressed = opts.is_a?(Hash) ? opts.fetch(:compressed, true) : opts
-      @key = OpenSSL::PKey::EC.new('secp256k1')
+      @key = Bitcoin.bitcoin_elliptic_curve
       @pubkey_compressed = pubkey ? self.class.is_compressed_pubkey?(pubkey) : compressed
       set_priv(privkey)  if privkey
       set_pub(pubkey, @pubkey_compressed)  if pubkey
