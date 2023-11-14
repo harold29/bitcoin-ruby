@@ -286,11 +286,11 @@ module Bitcoin
     end
 
     def bitcoin_elliptic_curve
-      ::OpenSSL::PKey::EC.new("secp256k1")
+      ::OpenSSL::PKey::EC.generate('secp256k1')
     end
 
     def generate_key
-      key = bitcoin_elliptic_curve.generate_key
+      key = bitcoin_elliptic_curve
       inspect_key( key )
     end
 
