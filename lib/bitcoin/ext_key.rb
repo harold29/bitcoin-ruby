@@ -169,8 +169,7 @@ module Bitcoin
       l = Bitcoin.hmac_sha512(chain_code, data)
       left = OpenSSL::BN.from_hex(l[0..31].bth)
       raise 'invalid key' if left.to_i >= CURVE_ORDER
-      ec_key = OpenSSL::PKey::EC.new('secp256k1')
-      new_key.pub_key = ec_key.group.generator.mul(left).ec_add(pub_key)
+      new_key.pub_key = OpenSSL::PKey::EC.new('secp256k1').group.generator.mul(left).ec_add(pub_key)
       new_key.chain_code = l[32..-1]
       new_key
     end
@@ -184,8 +183,7 @@ module Bitcoin
       key.parent_fingerprint = data.read(4).bth
       key.number = data.read(4).unpack('N').first
       key.chain_code = data.read(32)
-      ec_key = OpenSSL::PKey::EC.new('secp256k1')
-      key.pub_key = OpenSSL::PKey::EC::Point.from_hex(ec_key.group, data.read(33).bth)
+      key.pub_key = OpenSSL::PKey::EC::Point.from_hex(OpenSSL::PKey::EC.new('secp256k1').group, data.read(33).bth)
       key
     end
   end
